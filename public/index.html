@@ -1,0 +1,201 @@
+<html>
+
+<head>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/jquery.simpleWeather.min.js"></script>
+    <script>
+        var imgIndex = 0;
+        var clockTimer = 1000;
+        var cacheTimer = 20000;
+        var photoTimer = 10000;
+        var weatherTimer = 1000 * 60 * 60;
+        var images = [];
+        var img = new Image();
+           
+        function hexToBase64(str) {
+            return btoa(String.fromCharCode.apply(null, str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" ")));
+        }
+
+        function cachePhoto(){
+            $.ajax({
+                url: "/picture/cache"
+            }).then(function(data) {
+                loadList();
+            });
+        }
+
+        function loadList(callback){
+            $.ajax({
+                    url: "/picture/list"
+                }).then(function(data) {
+                    images = data;
+                    if(callback){callback();}
+                });
+        }
+
+        function loadPhoto() {
+            imgIndex = imgIndex >= images.length ? 0 : ++imgIndex;
+            //img.src = images[imgIndex];
+            $.ajax({
+                url: "/picture/img/" + images[imgIndex]
+            }).then(function(data) {
+                img.src = "data:image/jpeg;base64,"+data;
+                //document.body.appendChild(img);
+            });
+        }
+
+        function setClock() {
+            var d = new Date();
+            $("#dateHead").html(d.toDateString());
+            $("#timeHead").html(d.toLocaleTimeString());
+        }
+
+
+        function calcPictureDimensions(canvasWidth, canvasHeight, img){
+            var ct = document.getElementById('measure'); 
+            ct.appendChild(img);
+            var wrh = img.width / img.height;
+            var newWidth = canvasWidth;
+            var newHeight = newWidth / wrh;
+            if (newHeight > canvasHeight) {
+                newHeight = canvasHeight;
+                newWidth = newHeight * wrh;
+            }
+            ct.removeChild(img);
+            
+            return {
+                width:newWidth,
+                height:newHeight,
+                ratio: wrh
+            }
+        }
+        function calcPictureLocation(dimensions, canvasWidth, canvasHeight){
+            return {
+                x: (canvasWidth-dimensions.width)/2, 
+                y: (canvasHeight-dimensions.height)/2
+            };
+        }
+
+        function getWeather() {
+
+            var canvasWidth = window.innerWidth-25;
+            var canvasHeight = window.innerHeight-25;
+            
+
+            var canvas = document.getElementById('photoGallery');
+            var context = canvas.getContext('2d');
+            img.onload = function() {
+
+                var width = window.innerWidth-25;
+                var height = window.innerHeight-25;
+                context.canvas.width = width;
+                context.canvas.height = height;
+
+                var dim = calcPictureDimensions(context.canvas.width, context.canvas.height, img);
+                var loc = calcPictureLocation(dim, context.canvas.width, context.canvas.height);
+
+                context.drawImage(img, loc.x, loc.y, dim.width, dim.height);
+            };
+
+            $.simpleWeather({
+                location: 'Basking Ridge,NJ',
+                woeid: '',
+                unit: 'f',
+                success: function(weather) {
+                    html = weather.city + ', ' + weather.region + '   ' + weather.temp + '°' + weather.units.temp;
+                    $("#weatherHead").html(html);
+                    html = 'Feel like ' + weather.wind.chill + '°' + '  ' + weather.currently + '  ' + weather.wind.direction + '  ' + weather.wind.speed + '  ' + weather.units.speed;
+                    $("#weatherBody").html(html);
+                },
+                error: function(error) {
+                    $(".weather").html('<p>' + error + '</p>');
+                }
+            });
+        }
+
+        $(function() {
+            setClock();
+            setInterval(cachePhoto, cacheTimer);
+            setInterval(loadPhoto, photoTimer);
+            setInterval(getWeather, weatherTimer);
+            setInterval(setClock, clockTimer);
+
+            loadList(loadPhoto);
+            getWeather();
+        });
+    </script>
+    <style>
+
+        h1 {
+            margin-block-start:0em;
+            margin-block-end:0em;
+            display: inline-block;
+            color: white;
+            text-shadow:
+            -1px -1px 0 #000,  
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;
+        }
+
+        h4 {
+            margin-block-start:0em;
+            margin-block-end:0em;
+            display: inline-block;
+            color: white;
+            text-shadow:
+            -1px -1px 0 #000,  
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;
+        }
+
+        #photoGallery {
+            position: relative;
+            margin: 0 auto; }
+
+        canvas{ position: absolute; z-index: 1 }
+        body{ margin:0px; }
+
+        .dateHead {
+            font-family:Alegreya Sans;
+            text-align: center;
+        }
+        .timeHead {
+            font-family:Alegreya Sans;
+            text-align: center;            
+        }
+        .weatherHead {
+            font-family:Alegreya Sans;
+            text-align: center;            
+        }
+        .weatherBody {
+            font-family:Alegreya Sans;
+            text-align: center;            
+        }
+
+        .event {
+            width:100%;
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            margin: 0 auto;
+            z-index: 2;
+            background: #607d8b3b; }
+        
+        #measure { position: absolute; left: -10000px; top: -100000px;}
+    </style>
+</head>
+    <div id="measure"></div>
+    <div class="container" style="overflow: hidden; background-color:black; width:100%">
+        <div class="event">
+            <h1 id="dateHead"></h1>
+            <h4 id="weatherHead"></h4>
+            <h4 id="weatherBody"></h4>
+            <h1 id=timeHead></h1>
+        </div>
+       <canvas id="photoGallery" style="background-color:black;top: 0px;left: 0px;">
+                Your browser does not support the HTML5 canvas tag.
+       </canvas>
+</div>
+</html>
