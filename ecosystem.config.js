@@ -1,7 +1,7 @@
 module.exports = {
     apps : [{
       name: "piframe",
-      script: "./piframe.js",
+      script: "/home/pi/git/piframe.js",
       watch: ".",
     }]
   }
