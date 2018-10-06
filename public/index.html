@@ -77,17 +77,12 @@
         }
 
         function getWeather() {
-
-            var canvasWidth = window.innerWidth-25;
-            var canvasHeight = window.innerHeight-25;
-            
-
             var canvas = document.getElementById('photoGallery');
             var context = canvas.getContext('2d');
             img.onload = function() {
 
-                var width = window.innerWidth-25;
-                var height = window.innerHeight-25;
+                var width = window.innerWidth;
+                var height = window.innerHeight;
                 context.canvas.width = width;
                 context.canvas.height = height;
 
