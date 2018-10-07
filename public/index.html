@@ -70,8 +70,9 @@
             }
         }
         function calcPictureLocation(dimensions, canvasWidth, canvasHeight){
+            var wb = document.getElementById('weatherBody');
             return {
-                x: (canvasWidth-dimensions.width)/2, 
+                x: (canvasWidth-wb.clientWidth-dimensions.width)/2, 
                 y: (canvasHeight-dimensions.height)/2
             };
         }
@@ -98,9 +99,9 @@
                 unit: 'f',
                 success: function(weather) {
                     html = weather.city + ', ' + weather.region + '   ' + weather.temp + '°' + weather.units.temp;
-                    $("#weatherLeft").html(html);
+                    $("#weatherHead").html(html);
                     html = 'Feel like ' + weather.wind.chill + '°' + '  ' + weather.currently + '  ' + weather.wind.direction + '  ' + weather.wind.speed + '  ' + weather.units.speed;
-                    $("#weatherRight").html(html);
+                    $("#weatherBody").html(html);
                 },
                 error: function(error) {
                     $(".weather").html('<p>' + error + '</p>');
@@ -160,30 +161,28 @@
             font-family:Alegreya Sans;
             text-align: center;            
         }
-        .weatherLeft {
+        .weatherHead {
             font-family:Alegreya Sans;
             text-align: center;            
         }
-        .weatherRight {
+        .weatherBody {
             font-family:Alegreya Sans;
             text-align: center;            
         }
 
         .event {
-            width:100%;
-            display: flex;
-            justify-content: space-between;
+            display: block;
+            text-align:center;
             position: absolute;
-            margin: 0 auto;
+            right: 0;
             z-index: 2;
         }
         .weather {
-            width:100%;
-            display: flex;
-            justify-content: space-between;
+            display: block;
+            text-align:center;
             position: absolute;
+            right: 0;
             bottom: 0;
-            margin: 0 auto;
             z-index: 2;
         }
         
@@ -193,12 +192,12 @@
     <div id="measure"></div>
     <div class="container" style="overflow: hidden; background-color:black; width:100%">
         <div class="event">
-            <h1 id="dateHead"></h1>
-            <h1 id=timeHead></h1>
+            <div><h1 id="dateHead"></h1></div>
+            <div><h1 id=timeHead></h1></div>
         </div>
         <div class="weather">
-            <h4 id="weatherLeft"></h4>
-            <h4 id="weatherRight"></h4>
+            <div><h4 id="weatherHead"></h4></div>
+            <div><h4 id="weatherBody"></h4></div>
         </div>
        <canvas id="photoGallery" style="background-color:black;top: 0px;left: 0px;">
                 Your browser does not support the HTML5 canvas tag.
