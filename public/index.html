@@ -98,9 +98,9 @@
                 unit: 'f',
                 success: function(weather) {
                     html = weather.city + ', ' + weather.region + '   ' + weather.temp + '°' + weather.units.temp;
-                    $("#weatherHead").html(html);
+                    $("#weatherLeft").html(html);
                     html = 'Feel like ' + weather.wind.chill + '°' + '  ' + weather.currently + '  ' + weather.wind.direction + '  ' + weather.wind.speed + '  ' + weather.units.speed;
-                    $("#weatherBody").html(html);
+                    $("#weatherRight").html(html);
                 },
                 error: function(error) {
                     $(".weather").html('<p>' + error + '</p>');
@@ -160,11 +160,11 @@
             font-family:Alegreya Sans;
             text-align: center;            
         }
-        .weatherHead {
+        .weatherLeft {
             font-family:Alegreya Sans;
             text-align: center;            
         }
-        .weatherBody {
+        .weatherRight {
             font-family:Alegreya Sans;
             text-align: center;            
         }
@@ -176,7 +176,16 @@
             position: absolute;
             margin: 0 auto;
             z-index: 2;
-            background: #607d8b3b; }
+        }
+        .weather {
+            width:100%;
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            bottom: 0;
+            margin: 0 auto;
+            z-index: 2;
+        }
         
         #measure { position: absolute; left: -10000px; top: -100000px;}
     </style>
@@ -185,9 +194,11 @@
     <div class="container" style="overflow: hidden; background-color:black; width:100%">
         <div class="event">
             <h1 id="dateHead"></h1>
-            <h4 id="weatherHead"></h4>
-            <h4 id="weatherBody"></h4>
             <h1 id=timeHead></h1>
+        </div>
+        <div class="weather">
+            <h4 id="weatherLeft"></h4>
+            <h4 id="weatherRight"></h4>
         </div>
        <canvas id="photoGallery" style="background-color:black;top: 0px;left: 0px;">
                 Your browser does not support the HTML5 canvas tag.
