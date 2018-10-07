@@ -71,8 +71,10 @@
         }
         function calcPictureLocation(dimensions, canvasWidth, canvasHeight){
             var wb = document.getElementById('weatherBody');
+            var left = (canvasWidth-wb.clientWidth-dimensions.width)/2 < 0 ? 0 :
+                (canvasWidth-wb.clientWidth-dimensions.width)/2;
             return {
-                x: (canvasWidth-wb.clientWidth-dimensions.width)/2, 
+                x: left/2, 
                 y: (canvasHeight-dimensions.height)/2
             };
         }
