@@ -6,7 +6,7 @@
     <script>
         var imgIndex = 0;
         var clockTimer = 1000;
-        var cacheTimer = 10000*60*60;
+        var cacheTimer = 1000*60*15;
         var photoTimer = 10000;
         var weatherTimer = 1000 * 60 * 60;
         var images = [];
@@ -118,6 +118,7 @@
 
             loadList(loadPhoto);
             getWeather();
+            cachePhoto();
         });
     </script>
     <style>
