@@ -93,6 +93,9 @@
                 var loc = calcPictureLocation(dim, context.canvas.width, context.canvas.height);
 
                 context.drawImage(img, loc.x, loc.y, dim.width, dim.height);
+                context.font = '10px serif';
+                context.fillStyle = "white";
+                context.fillText(imgIndex, 50, 50);
             };
 
             $.simpleWeather({

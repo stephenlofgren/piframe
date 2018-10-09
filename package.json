@@ -1,6 +1,11 @@
 {
     "dependencies": {
+        "auto-updater": "^1.0.2",
         "express": "^4.16.3",
         "rsync": "^0.6.1"
+    },
+    "auto-updater":{
+        "repo":"/stephenlofgren/piframe",
+        "branch":"master"
     }
 }
