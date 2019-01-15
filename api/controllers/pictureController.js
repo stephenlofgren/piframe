@@ -1,6 +1,7 @@
 var fs = require('fs');
 var Rsync = require('rsync');
 var config = require('../../config.json');
+var stream = require('stream')
 
 exports.list_all_pictures = function(req, res) {
     var jsonArr = [];
@@ -14,9 +15,13 @@ exports.list_all_pictures = function(req, res) {
 })};
 
 exports.picture = function(req, res, name) {
-    var img = fs.readFileSync(config.rsyncDst + name).toString('base64');
-    res.writeHead(200, {'Content-Type': 'image/jpeg' });
-    res.end(img, 'binary');
+    //var img = fs.readFileSync(config.rsyncDst + name).toString('base64');
+    var filePath = config.rsyncDst + name;
+    var stat = fs.statSync(filePath);
+    res.writeHead(200, {'Content-Type': 'image/jpeg', 'Content-Length': stat.size });
+    var readStream = fs.createReadStream(filePath);
+    readStream.pipe(res);
+   
 };
 exports.cache = function(req, res, name) {
     var rsync = new Rsync()

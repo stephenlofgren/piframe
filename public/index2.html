@@ -4,21 +4,14 @@
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/jquery.simpleWeather.min.js"></script>
     <script src="js/load-image.all.min.js"></script>
-    
+    <!--script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script-->
     <script>
         var imgIndex = 0;
         var clockTimer = 1000;
         var cacheTimer = 1000*60*15;
         var photoTimer = 10000;
-        var weatherTimer = 1000 * 60 * 60;
         var images = [];
-
-        function setClock() {
-            var d = new Date();
-            $("#dateHead").html(d.toDateString());
-            $("#timeHead").html(d.toLocaleTimeString());
-        }
-        
+           
         function cachePhoto(){
             $.ajax({
                 url: "/picture/cache"
@@ -95,6 +88,24 @@
         }
 
         function getWeather() {
+            var canvas = document.getElementById('photoGallery');
+            var context = canvas.getContext('2d');
+            img.onload = function() {
+
+                var width = window.innerWidth;
+                var height = window.innerHeight;
+                context.canvas.width = width;
+                context.canvas.height = height;
+
+                var dim = calcPictureDimensions(context.canvas.width, context.canvas.height, img);
+                var loc = calcPictureLocation(dim, context.canvas.width, context.canvas.height);
+
+                context.drawImage(img, loc.x, loc.y, dim.width, dim.height);
+                context.font = '10px serif';
+                context.fillStyle = "white";
+                context.fillText(imgIndex, 50, 50);
+            };
+
             $.simpleWeather({
                 location: 'Basking Ridge,NJ',
                 woeid: '',
@@ -112,14 +123,10 @@
         }
 
         $(function() {
-            setClock();
             setInterval(cachePhoto, cacheTimer);
             setInterval(loadPhoto, photoTimer);
-            setInterval(getWeather, weatherTimer);
-            setInterval(setClock, clockTimer);
 
             loadList(loadPhoto);
-            getWeather();
             cachePhoto();
         });
     </script>
