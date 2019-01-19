@@ -42,24 +42,26 @@
 
             loadImage(url, 
                 function(img) {
-                    console.log(img);
+                    if(img.type === "error"){
+                        console.log("Error loading image " + imageUrl);
+                    }
+                    else {
+                        imgIndex = imgIndex >= images.length ? 0 : ++imgIndex;
+                        var canvas = document.getElementById('photoGallery');
+                        var context = canvas.getContext('2d');
+                        var width = window.innerWidth;
+                        var height = window.innerHeight;
+                        context.canvas.width = width;
+                        context.canvas.height = height;
 
-                    //var ct = document.getElementById('measure'); 
-                    //ct.appendChild(img);
-                    var canvas = document.getElementById('photoGallery');
-                    var context = canvas.getContext('2d');
-                    var width = window.innerWidth;
-                    var height = window.innerHeight;
-                    context.canvas.width = width;
-                    context.canvas.height = height;
+                        var dim = calcPictureDimensions(context.canvas.width, context.canvas.height, img);
+                        var loc = calcPictureLocation(dim, context.canvas.width, context.canvas.height);
 
-                    var dim = calcPictureDimensions(context.canvas.width, context.canvas.height, img);
-                    var loc = calcPictureLocation(dim, context.canvas.width, context.canvas.height);
-
-                    context.drawImage(img, loc.x, loc.y, dim.width, dim.height);
-                    context.font = '10px serif';
-                    context.fillStyle = "white";
-                    context.fillText(imgIndex, 50, 50);
+                        context.drawImage(img, loc.x, loc.y, dim.width, dim.height);
+                        context.font = '10px serif';
+                        context.fillStyle = "white";
+                        context.fillText(imgIndex, 50, 50);
+                    }
                 },
                 {maxWidth: 600, orientation:true}
                 );
