@@ -2,15 +2,27 @@
 
 <head>
     <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/jquery.simpleWeather.min.js"></script>
-    <script src="js/load-image.all.min.js"></script>
-    
+    <!----script src="js/load-image.all.min.js"></script-->
+
+    <script src="js/load-image.js"></script>
+
+    <script src="js/load-image-scale.js"></script>
+    <script src="js/load-image-meta.js"></script>
+    <script src="js/load-image-fetch.js"></script>
+    <script src="js/load-image-orientation.js"></script>
+
+    <script src="js/load-image-exif.js"></script>
+    <script src="js/load-image-exif-map.js"></script>
+
+    <script src="js/load-image-iptc.js"></script>
+    <script src="js/load-image-iptc-map.js"></script>
+
+
     <script>
         var imgIndex = 0;
         var clockTimer = 1000;
         var cacheTimer = 1000*60*15;
-        var photoTimer = 10000;
-        var weatherTimer = 1000 * 60 * 60;
+        var photoTimer = 1000;
         var images = [];
 
         function setClock() {
@@ -37,13 +49,13 @@
         }
 
         function loadPhoto() {
-            imgIndex = imgIndex >= images.length ? 0 : ++imgIndex;
+            imgIndex = imgIndex < images.length-1 ? imgIndex+1 : 0;
             var url = "/picture/img/" + images[imgIndex]; 
 
             loadImage(url, 
                 function(img) {
                     if(img.type === "error"){
-                        console.log("Error loading image " + imageUrl);
+                        console.log("Error loading image " + url);
                     }
                     else {
                         imgIndex = imgIndex >= images.length ? 0 : ++imgIndex;
@@ -88,41 +100,21 @@
             }
         }
         function calcPictureLocation(dimensions, canvasWidth, canvasHeight){
-            var wb = document.getElementById('weatherBody');
-            var left = (canvasWidth-wb.clientWidth-dimensions.width)/2 < 0 ? 0 :
-                (canvasWidth-wb.clientWidth-dimensions.width)/2;
+            var left = (canvasWidth-dimensions.width)/2 < 0 ? 0 :
+                (canvasWidth-dimensions.width)/2;
             return {
                 x: left/2, 
                 y: (canvasHeight-dimensions.height)/2
             };
         }
 
-        function getWeather() {
-            $.simpleWeather({
-                location: 'Basking Ridge,NJ',
-                woeid: '',
-                unit: 'f',
-                success: function(weather) {
-                    html = weather.city + ', ' + weather.region + '   ' + weather.temp + '°' + weather.units.temp;
-                    $("#weatherHead").html(html);
-                    html = 'Feel like ' + weather.wind.chill + '°' + '  ' + weather.currently + '  ' + weather.wind.direction + '  ' + weather.wind.speed + '  ' + weather.units.speed;
-                    $("#weatherBody").html(html);
-                },
-                error: function(error) {
-                    $(".weather").html('<p>' + error + '</p>');
-                }
-            });
-        }
-
         $(function() {
             setClock();
             setInterval(cachePhoto, cacheTimer);
             setInterval(loadPhoto, photoTimer);
-            //setInterval(getWeather, weatherTimer);
             setInterval(setClock, clockTimer);
 
             loadList(loadPhoto);
-            getWeather();
             cachePhoto();
         });
     </script>
@@ -167,28 +159,12 @@
             font-family:Alegreya Sans;
             text-align: center;            
         }
-        .weatherHead {
-            font-family:Alegreya Sans;
-            text-align: center;            
-        }
-        .weatherBody {
-            font-family:Alegreya Sans;
-            text-align: center;            
-        }
 
         .event {
             display: block;
             text-align:center;
             position: absolute;
             right: 0;
-            z-index: 2;
-        }
-        .weather {
-            display: block;
-            text-align:center;
-            position: absolute;
-            right: 0;
-            bottom: 0;
             z-index: 2;
         }
         
@@ -200,10 +176,6 @@
         <div class="event">
             <div><h1 id="dateHead"></h1></div>
             <div><h1 id=timeHead></h1></div>
-        </div>
-        <div class="weather">
-            <div><h4 id="weatherHead"></h4></div>
-            <div><h4 id="weatherBody"></h4></div>
         </div>
        <canvas id="photoGallery" style="background-color:black;top: 0px;left: 0px;">
                 Your browser does not support the HTML5 canvas tag.
