@@ -49,13 +49,19 @@
         }
 
         function loadPhoto() {
-            imgIndex = imgIndex < images.length-1 ? imgIndex+1 : 0;
+            imgIndex = Math.floor(Math.random() * images.length);
+            //imgIndex = imgIndex < images.length-1 ? imgIndex+1 : 0;
             var url = "/picture/img/" + images[imgIndex]; 
 
             loadImage(url, 
                 function(img) {
                     if(img.type === "error"){
-                        console.log("Error loading image " + url);
+                        var msg = "Error loading image " + url;
+                        document.getElementById('error').innerText(msg);
+                        console.log(msg);
+                        setTimeout(function() {
+                            location.reload();
+                        }, 3000);
                     }
                     else {
                         var canvas = document.getElementById('photoGallery');
@@ -175,6 +181,7 @@
         <div class="event">
             <div><h1 id="dateHead"></h1></div>
             <div><h1 id=timeHead></h1></div>
+            <div><h1 id=error></h1></div>
         </div>
        <canvas id="photoGallery" style="background-color:black;top: 0px;left: 0px;">
                 Your browser does not support the HTML5 canvas tag.
